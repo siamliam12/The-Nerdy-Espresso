@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  username  String     @unique
+  clerkId   String     @unique
+  name      String?
+  is_Admin  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  likes     Like[]
+  podcasts  Podcasts[]
+}
+
+model Podcasts {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  imagePath String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  likes     Like[]
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  podcastId String
+  createdAt DateTime @default(now())
+  podcasts  Podcasts @relation(fields: [podcastId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, podcastId])
+  @@index([userId, podcastId])
+}
