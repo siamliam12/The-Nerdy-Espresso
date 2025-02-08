@@ -13,6 +13,8 @@ import {
   ListOrdered,
   List,
 } from "lucide-react";
+import TextAlign from '@tiptap/extension-text-align'
+import Highlight from '@tiptap/extension-highlight'
 
 interface PodcastEditorProps {
   initialContent?: string;
@@ -21,12 +23,17 @@ interface PodcastEditorProps {
 
 const PodcastEditor = ({ initialContent = "",onContentChange }: PodcastEditorProps) => {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Highlight,
+    ],
     content: initialContent,
     editorProps: {
       attributes: {
         class:
-          "prose prose-lg focus:outline-none max-w-3xl mx-auto p-2 min-h-[70vh]",
+          "prose focus:outline-none max-w-3xl mx-auto p-2 min-h-[70vh] [&>p]:my-1",
       },
     },
     immediatelyRender: false,

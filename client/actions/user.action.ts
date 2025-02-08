@@ -54,3 +54,20 @@ export async function getUserByClerkId(clerkId:string){
         }
     })
 }
+
+export async function fetchUserByIdFromDB(userId:string) {
+    try {
+      const objectToArray = []
+      const author = await db.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      // console.log(author);
+      objectToArray.push(author)
+      return objectToArray;
+    } catch (error) {
+      console.log("Error fetching the author: ", error);
+      return { success: false, error: "Failed to fetch podcasts" };
+    }
+  }

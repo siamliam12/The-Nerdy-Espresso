@@ -62,10 +62,13 @@ function Dashboard() {
             className="text-2xl font-bold"
           />
         </div>
+        <div className="border border-gray-300 shadow-md p-4 rounded-md">
+
         <PodcastEditor
           initialContent={body}
           onContentChange={(newContent) => setBody(newContent)}
         />
+        </div>
         {/* <FileUpload/> */}
         <Label htmlFor="Image">Upload the thumbnail</Label>
         <Input

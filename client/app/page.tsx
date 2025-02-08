@@ -1,16 +1,35 @@
 "use client";
-import React from "react";
-import { IKImage } from "imagekitio-next";
-import { FileUpload } from "@/components/FileUpload";
-const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
+import ShowPodcast from "@/components/ShowPodcast";
+import React, { useState, useEffect } from "react";
+import { fetchPodcastsFromDB } from "@/actions/podcast.action";
 
 export default function Home() {
-  const render = ()=>{
-      const key =  process.env.NEXT_PUBLIC_IMAGEKIT_PRIVATE_KEY || "test"
-      console.log(key)
-  }
-  return <div className="App">
-    <IKImage urlEndpoint={urlEndpoint} path="/snorkelling-101-first-timers-guide.thumb.800.480_SmT5lNgzL.jfif" width={400} height={400} alt="Alt text" />
-  <FileUpload/>
-  </div>;
+  const [podcasts, setPodcasts] = useState<{ authorId: string; title: string }[]>([]);
+
+  useEffect(() => {
+    async function getPodcasts() {
+      const response = await fetchPodcastsFromDB();
+      console.log("response",response)
+      if (response.success) {
+        const formattedPodcasts = response.podcasts.map(podcast => ({
+          ...podcast,
+          createdAt: podcast.createdAt.toISOString(),
+          updatedAt: podcast.updatedAt.toISOString()
+        }));
+        setPodcasts(formattedPodcasts);
+      } else {
+        console.error(response.error);
+      }
+    }
+    getPodcasts();
+  }, []);
+
+  return (
+    <div className="container mx-auto justify-center items-center py-2 flex flex-wrap">
+      {podcasts.map((podcast) => (
+        <ShowPodcast key={podcast.authorId} podcast={podcast} />
+      ))}
+    </div>
+  );
 }
+
