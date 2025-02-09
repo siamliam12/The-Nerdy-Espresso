@@ -75,7 +75,7 @@ export async function fetchUserByIdFromDB(userId:string) {
 export async function getCurrentUser(){
     const user = await currentUser()
     const id = user?.id
-    const userInfo = await getUserByClerkId(id)
+    const userInfo = await getUserByClerkId(id || "")
     console.log(userInfo?.id)
     return userInfo?.id
 }
