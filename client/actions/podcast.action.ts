@@ -55,6 +55,13 @@ export async function fetchPodcastByIdFromDB(podcastId:string) {
       where: {
         id: podcastId,
       },
+      include:{
+        _count:{
+          select:{
+            likes:true
+          }
+        }
+      }
     });
     // console.log(podcasts);
     objectToArray.push(podcast)

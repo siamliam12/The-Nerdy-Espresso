@@ -37,7 +37,7 @@ function Dashboard() {
       const result = await createPodcast(formData);
       if (result?.success) {
         console.log(result);
-        router.push(`/podcasts/${result.podcast?.authorId}`);
+        router.push(`/podcasts/${result.podcast?.id}`);
       } else {
         throw new Error(result?.error);
       }
@@ -69,7 +69,6 @@ function Dashboard() {
           onContentChange={(newContent) => setBody(newContent)}
         />
         </div>
-        {/* <FileUpload/> */}
         <Label htmlFor="Image">Upload the thumbnail</Label>
         <Input
           id="image"
@@ -87,13 +86,11 @@ function Dashboard() {
             type="submit"
             disabled={isSaving}
             className="w-full"
-            // onClick={()=>image && getImagePath(image)}
           >
             {isSaving ? "Publishing..." : "Publish Post"}
           </Button>
         </div>
       </form>
-      {/* <DarkModeToggleButton/> */}
     </div>
   );
 }
