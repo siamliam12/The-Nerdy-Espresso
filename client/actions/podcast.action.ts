@@ -68,6 +68,6 @@ export async function fetchPodcastByIdFromDB(podcastId:string) {
     return objectToArray;
   } catch (error) {
     console.log("Error fetching the podcasts: ", error);
-    return { success: false, error: "Failed to fetch podcasts" };
+    return
   }
 }

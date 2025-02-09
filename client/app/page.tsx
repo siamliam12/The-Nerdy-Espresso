@@ -4,20 +4,34 @@ import React, { useState, useEffect } from "react";
 import { fetchPodcastsFromDB } from "@/actions/podcast.action";
 import { Separator } from "@/components/ui/separator";
 
+interface podcastStuff{
+  id: string
+  title: string
+  content: string
+  imagePath: string
+  createdAt: string
+  updatedAt: string
+  authorId: string
+}
+
 export default function Home() {
-  const [podcasts, setPodcasts] = useState<{ authorId: string; title: string }[]>([]);
+  const [podcasts, setPodcasts] = useState<podcastStuff[]>([]);
 
   useEffect(() => {
     async function getPodcasts() {
       const response = await fetchPodcastsFromDB();
       console.log("response",response)
       if (response.success) {
-        const formattedPodcasts = response.podcasts.map(podcast => ({
-          ...podcast,
+        const formattedPodcasts = response.podcasts?.map(podcast => ({
+          id: podcast.id,
+          title: podcast.title,
+          content: podcast.content,
+          imagePath: podcast.imagePath || "",
           createdAt: podcast.createdAt.toISOString(),
-          updatedAt: podcast.updatedAt.toISOString()
+          updatedAt: podcast.updatedAt.toISOString(),
+          authorId: podcast.authorId
         }));
-        setPodcasts(formattedPodcasts);
+        setPodcasts(formattedPodcasts || []);
       } else {
         console.error(response.error);
       }

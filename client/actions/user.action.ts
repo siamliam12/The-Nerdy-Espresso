@@ -63,12 +63,12 @@ export async function fetchUserByIdFromDB(userId:string) {
           id: userId,
         },
       });
-      // console.log(author);
+      console.log(author);
       objectToArray.push(author)
-      return objectToArray;
+      return author;
     } catch (error) {
       console.log("Error fetching the author: ", error);
-      return { success: false, error: "Failed to fetch podcasts" };
+      return;
     }
   }
 

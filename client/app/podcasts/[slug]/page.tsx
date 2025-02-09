@@ -19,6 +19,9 @@ interface Podcast {
   createdAt: string;
   updatedAt: string;
   id: string;
+  _count:{
+    likes:number;
+  }
 }
 
 interface face {
@@ -27,7 +30,7 @@ interface face {
   username: string;
   clerkId: string;
   name: string;
-  is_Admin: string;
+  is_Admin: boolean;
   updatedAt: string;
 }
 
@@ -38,20 +41,32 @@ export default function Page({
 }) {
   // Initialize state with proper type
   const [podcast, setPodcast] = useState<Podcast | null>(null);
-  const [user, setUser] = useState<face | []>([]);
+  const [user, setUser] = useState<face | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [userId, setuserId] = useState("");
 
   async function getUser(authorId: string) {
     const user = await fetchUserByIdFromDB(authorId);
-    setUser(user);
+    console.log("testing : ",user?.id)
+    if (user !== null || user !== undefined){
+      const formattedUser: face = {
+        id:user?.id || "",
+        email: user?.email || "",
+        username: user?.username || "",
+        clerkId: user?.clerkId || "",
+        is_Admin: user?.is_Admin || false,
+        name:user?.name || "",
+        updatedAt: user?.updatedAt.toISOString() || ""
+      };
+      setUser(formattedUser);
+    }
   }
 
   async function handleLikeClick() {
     if (!podcast) return;
-    const result = await togleLikePodcast(podcast[0].id,userId)
-    if (result.success){
+    const result = await togleLikePodcast(podcast.id,userId)
+    if (result?.success){
       setIsLiked(result.liked)
       setLikeCount(prev=> result.liked ? prev + 1 : prev - 1 )
     }
@@ -61,19 +76,25 @@ export default function Page({
   useEffect(() => {
     async function getPodcasts() {
       try {
-        const userinfo = await getCurrentUser()
+        const userinfo = await getCurrentUser() || ""
         setuserId(userinfo)
         const slug = (await params).slug;
         const response = await fetchPodcastByIdFromDB(slug);
-        if (response) {
+        if (Array.isArray(response) && response.length > 0 && response[0] !== null) {
+          const formattedPodcast: Podcast = {
+            ...response[0],
+            imagePath: response[0].imagePath || "",
+            createdAt: response[0].createdAt.toISOString(), // Ensure it's a string
+            updatedAt: response[0].updatedAt.toISOString(), // Ensure it's a string
+          };
           // Assuming response is your podcast data
-          setPodcast(response);
-          getUser(response[0].authorId);
-          setLikeCount(response[0]._count.likes)
+          setPodcast(formattedPodcast);
+          getUser(formattedPodcast.authorId);
+          setLikeCount(formattedPodcast._count.likes)
 
           //check if user has liked this podcast
           if (userId){
-            const hasLiked = await checkIfUserLikedPodcast(response[0].id,userId)
+            const hasLiked = await checkIfUserLikedPodcast(formattedPodcast.id,userId)
             setIsLiked(hasLiked)
           }
 
@@ -85,7 +106,7 @@ export default function Page({
       }
     }
     getPodcasts();
-  }, [params]);
+  }, [params,userId]);
 
   // Show loading state while podcast is null
   if (!podcast) {
@@ -98,7 +119,7 @@ export default function Page({
         <div className="sticky top-20 z-10">
           <IKImage
             urlEndpoint={urlEndpoint}
-            path={podcast[0].imagePath}
+            path={podcast.imagePath}
             width={390}
             height={250}
             alt={podcast.title}
@@ -107,19 +128,19 @@ export default function Page({
       </div>
       <div className="flex-1 items-center px-5">
         <div className="py-3 m-2">
-          <h1 className="font-mono text-3xl">{podcast[0].title}</h1>
+          <h1 className="font-mono text-3xl">{podcast.title}</h1>
           <div className="flex py-2 items-center ">
             <CircleUserRound className=" mr-2" />
-            <h6 className="font-mono text-sm">{user[0]?.name}</h6>
+            <h6 className="font-mono text-sm">{user?.name}</h6>
           </div>
           <h6 className="font-mono text-xs">
-            {formatDate(podcast[0].createdAt)}
+            {formatDate(podcast.createdAt)}
           </h6>
         </div>
 
         <div
           className="prose max-w-none pb-4"
-          dangerouslySetInnerHTML={{ __html: podcast[0].content }}
+          dangerouslySetInnerHTML={{ __html: podcast.content }}
         />
         <Separator/>
         <div className="flex items-center m-4">

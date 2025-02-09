@@ -8,7 +8,8 @@ export async function togleLikePodcast(podcastId:string,userId: string){
     try {
         // const {userId} = auth()
         if (!userId){
-            return { success: false, error: "User not authenticated" };
+            console.log("User not authenticated")
+            return
         }
         const existingLike = await db.like.findUnique({
             where:{
@@ -39,7 +40,7 @@ export async function togleLikePodcast(podcastId:string,userId: string){
         }
     } catch (error) {
         console.error("Error toggling like:", error);
-        return { success: false, error: "Failed to toggle like" };
+        return;
     }
 }
 
