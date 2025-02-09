@@ -37,7 +37,7 @@ function Contact() {
           </div>
           <div className="bg-gray-100 p-4 rounded-lg shadow-md mt-4">
             <p className="font-mono text-base text-gray-700">
-              Whether you're a tech enthusiast, a curious beginner, or just
+              Whether you are a tech enthusiast, a curious beginner, or just
               someone looking to stay updated on the ever-evolving world of
               computer science, this podcast has something for everyone. We dive
               into the latest trends, breakthrough technologies, and best
